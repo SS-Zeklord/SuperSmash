@@ -32,7 +32,7 @@ public class Player1// implements Runnable
     private boolean gravityOn = true;
     private double grav = 0.1;
     private double speed = 0;
-    private boolean jumping = true;
+    private boolean jumping = false;
     private int jumpMax = 0;
     private float distanceToJump = 0;
     private jump jump = new jump();
@@ -187,7 +187,7 @@ public class Player1// implements Runnable
                 for(int i=0;i<speed;i++)
                 {
                     if(getCollisions(Coll,2) == false)
-                        yPos+=1;
+                        yPos+=2;
                     else{}
                     //jumpMax = 0;
                 }
@@ -223,8 +223,8 @@ public class Player1// implements Runnable
 
     public void jump()
     {
-        if(jumping)
-            yPos = yPos-5;
+        if(jumping )
+            yPos = yPos-10;
 
     }
 
@@ -234,9 +234,10 @@ public class Player1// implements Runnable
             attack = true;
         }
         if(key == KeyEvent.VK_SPACE) {
-            gravityOn = false;
-            if(!jumping)
+            
+            if(!jumping && getGravColl(Coll,2) == true)
             {
+                gravityOn = false;
                 jumping = true;
                 new Thread(new jump()).start();
             }
