@@ -1,0 +1,26 @@
+#BlueJ class context
+comment0.params=p1
+comment0.target=Player2(Player)
+comment1.params=coll
+comment1.target=void\ setColl(java.util.LinkedList)
+comment10.params=
+comment10.target=float\ getX()
+comment11.params=
+comment11.target=float\ getY()
+comment2.params=coll\ x
+comment2.target=boolean\ getCollisions(java.util.LinkedList,\ int)
+comment3.params=coll\ y
+comment3.target=boolean\ getGravColl(java.util.LinkedList,\ int)
+comment4.params=
+comment4.target=void\ update()
+comment5.params=
+comment5.target=void\ move()
+comment6.params=
+comment6.target=void\ jump()
+comment7.params=e
+comment7.target=void\ keyPressed(java.awt.event.KeyEvent)
+comment8.params=e
+comment8.target=void\ keyReleased(java.awt.event.KeyEvent)
+comment9.params=
+comment9.target=java.awt.image.BufferedImage\ getPlayerImage()
+numComments=12

@@ -1,0 +1,20 @@
+#BlueJ class context
+comment0.params=icon\ menuBackground\ stages\ stageSelection\ ruleScreen\ menuScreen\ allStage
+comment0.target=Menu(java.util.LinkedList,\ java.awt.image.BufferedImage,\ java.util.LinkedList,\ java.awt.image.BufferedImage,\ java.awt.image.BufferedImage,\ java.awt.image.BufferedImage,\ java.util.LinkedList)
+comment1.params=
+comment1.target=java.util.LinkedList\ getAllStages()
+comment2.params=g2d
+comment2.target=void\ drawRuleScreen(java.awt.Graphics2D)
+comment3.params=g2d
+comment3.target=void\ drawMenuScreen(java.awt.Graphics2D)
+comment4.params=
+comment4.target=java.util.LinkedList\ getStages()
+comment5.params=
+comment5.target=java.awt.Rectangle[][]\ getIconLocations()
+comment6.params=
+comment6.target=java.awt.Rectangle[][]\ getStageLocations()
+comment7.params=g2d
+comment7.target=void\ drawStageSelect(java.awt.Graphics2D)
+comment8.params=g2d
+comment8.target=void\ drawCharSelect(java.awt.Graphics2D)
+numComments=9

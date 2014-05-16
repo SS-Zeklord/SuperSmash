@@ -1,0 +1,14 @@
+#BlueJ class context
+comment0.params=
+comment0.target=Animation()
+comment1.params=images
+comment1.target=void\ setFrames(java.util.LinkedList)
+comment2.params=currentFrame
+comment2.target=void\ setFrame(int)
+comment3.params=d
+comment3.target=void\ setDelay(long)
+comment4.params=
+comment4.target=void\ update()
+comment5.params=
+comment5.target=java.awt.image.BufferedImage\ getImage()
+numComments=6

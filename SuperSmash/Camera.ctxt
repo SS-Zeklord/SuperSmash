@@ -1,0 +1,8 @@
+#BlueJ class context
+comment0.params=background
+comment0.target=Camera(java.awt.image.BufferedImage)
+comment1.params=
+comment1.target=java.awt.image.BufferedImage\ getBackground()
+comment2.params=X\ Y\ W\ H
+comment2.target=void\ trace(int,\ int,\ int,\ int)
+numComments=3

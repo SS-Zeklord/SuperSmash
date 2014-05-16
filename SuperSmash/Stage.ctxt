@@ -1,0 +1,16 @@
+#BlueJ class context
+comment0.params=stage\ bounds\ x\ y\ x2\ y2
+comment0.target=Stage(java.awt.image.BufferedImage,\ java.util.LinkedList,\ int,\ int,\ int,\ int)
+comment1.params=
+comment1.target=int\ getY1()
+comment2.params=
+comment2.target=int\ getY2()
+comment3.params=
+comment3.target=int\ getX1()
+comment4.params=
+comment4.target=int\ getX2()
+comment5.params=
+comment5.target=java.awt.image.BufferedImage\ getStage()
+comment6.params=
+comment6.target=java.util.LinkedList\ getBounds()
+numComments=7
