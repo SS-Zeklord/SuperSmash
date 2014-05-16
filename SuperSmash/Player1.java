@@ -33,9 +33,11 @@ public class Player1// implements Runnable
     private double grav = 0.1;
     private double speed = 0;
     private boolean jumping = false;
+    private boolean jump2 = false;
     private int jumpMax = 0;
     private float distanceToJump = 0;
     private jump jump = new jump();
+    private int jumps =0;
     public Player1(Player p1, int x, int y)
     {
         this.p1 = p1;
@@ -193,7 +195,7 @@ public class Player1// implements Runnable
                 }
             }
             else
-                jumpMax = 0;
+                jumps = 0;
         }
         else
         {
@@ -223,7 +225,7 @@ public class Player1// implements Runnable
 
     public void jump()
     {
-        if(jumping )
+        if(jumping || jump2)
             yPos = yPos-10;
 
     }
@@ -235,11 +237,15 @@ public class Player1// implements Runnable
         }
         if(key == KeyEvent.VK_SPACE) {
             
-            if(!jumping && getGravColl(Coll,2) == true)
+            if(!jumping && getGravColl(Coll,2) == true||jumps <=1)
             {
                 gravityOn = false;
+                
+                
+                
                 jumping = true;
                 new Thread(new jump()).start();
+                jumps++;
             }
         }
 
@@ -271,7 +277,10 @@ public class Player1// implements Runnable
             try{
                 Thread.sleep(400);
                 //gravityOn = true;
+                if(!jumping)
+                jump2=false;
                 jumping = false;
+                
                 gravityOn = true;
             }
             catch(Exception ex){}
