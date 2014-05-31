@@ -36,7 +36,7 @@ public class GamePanel extends JPanel implements Runnable
     private boolean player1Selected = true;
     private boolean player2Selected = true;
     private boolean stageTest = true;
-    private boolean up;
+    //private boolean up;
     private boolean startGame = false;
     private Graphics dbg;
     private static Scanner kb;
@@ -65,6 +65,21 @@ public class GamePanel extends JPanel implements Runnable
     private String winner = "";
     private boolean p1chosen = false;
     private boolean p2chosen = false;
+    private int x1 = 50;
+    private int y1 = 200;
+    private int x2 = 700;
+    private int y2 = 500;
+    private boolean p1chose,p2chose = false;
+    private BufferedImage p1IconIm;
+    private BufferedImage p2IconIm;
+    private boolean left;
+    private boolean right;
+    private boolean up;
+    private boolean down;
+    private boolean left2;
+    private boolean right2;
+    private boolean up2;
+    private boolean down2;
     public GamePanel()  
     {
         String heightprompt = "Do you want to turn debugging on?";
@@ -124,12 +139,15 @@ public class GamePanel extends JPanel implements Runnable
                 p2.setColl(stageChoice.getBounds());
                 camera = new Camera(stageChoice.getStage());
             }
+            p1IconIm = ImageIO.read(new File("Images/P1.png"));
+            p2IconIm = ImageIO.read(new File("Images/P2.png"));
         }
         catch(Exception ex){}
+        //readyForTermination();
     }
 
     public void reset()//add all variables to reset and make a camera hat follos and make it go fullscreen in java
-    
+
     {
 
     }
@@ -137,35 +155,45 @@ public class GamePanel extends JPanel implements Runnable
     public void testPress(int x, int y)
     {
         if(isPaused == false)
-            System.out.println(""+x+" "+y);
+            if((x > 0 && y > 0))
+                System.out.println(""+x+" "+y);
         if(debug == false)
         {
             if(onMenu == true)
             {
-                Rectangle xy = new Rectangle(x,y,1,1);
-                if(xy.intersects(rulesButton))
+                Rectangle pl1 = new Rectangle(x1,y1,64,64);
+                Rectangle pl2 = new Rectangle(x2,y2,64,64);
+                if(pl1.intersects(rulesButton) && p1chose || pl2.intersects(rulesButton) && p2chose)
                 {
                     onMenu = false;
                     inRules = true;
+                    p1chose = false;
+                    p2chose = false;
                 }
-                else if(xy.intersects(battleButton))
+                else if(pl1.intersects(battleButton) && p1chose || pl2.intersects(battleButton) && p2chose)
                 {
                     onMenu = false;
                     inCharSelect = true;
+                    p1chose = false;
+                    p2chose = false;
                 }
             }
             else if(inRules == true)
             {
-                Rectangle xy = new Rectangle(x,y,1,1);
-                if(xy.intersects(startButton))
+                Rectangle pl1 = new Rectangle(x1,y1,64,64);
+                Rectangle pl2 = new Rectangle(x2,y2,64,64);
+                if((pl1).intersects(startButton) && p1chose || pl2.intersects(startButton) && p2chose)
                 {
                     onMenu = true;
                     inRules = false;
+                    p1chose = false;
+                    p2chose = false;
                 }
             }
             else if(inCharSelect == true)
             {
-                Rectangle xy = new Rectangle(x,y,1,1);
+                Rectangle pl1 = new Rectangle(x1,y1,64,64);
+                Rectangle pl2 = new Rectangle(x2,y2,64,64);
                 //make a new rectangle that moves with the arrow keys and check for intersections/
                 int i = 0;
                 stageChoice = menu.getAllStages().get(0);
@@ -173,26 +201,28 @@ public class GamePanel extends JPanel implements Runnable
                 {
                     for(int c=0;c<iconLocations[0].length;c++)
                     {
-                        if(xy.intersects(iconLocations[r][c]))
+                        if(pl1.intersects(iconLocations[r][c]) || pl2.intersects(iconLocations[r][c]))
                         {
                             //if(player1Selected == true)
                             //{
-                            if(i<setup.getPlayerList().size())
+                            if(i<setup.getPlayerList().size() && p1chose)
                             {
                                 p1 = new Player1(setup.getPlayerList().get(i),stageChoice.getX1(),stageChoice.getY2());
                             }
                             else
+                            if(p1chose)
                                 p1 = new Player1(setup.getPlayerList().get(setup.getPlayerList().size()-1),stageChoice.getX2(),stageChoice.getY2());
                             //player1Selected = false;
                             //}
 
                             //if(player2Selected == true)
                             //{
-                            if(i<setup.getPlayerList().size())
+                            if(i<setup.getPlayerList().size() && p2chose)
                             {
                                 p2 = new Player2(setup.getPlayerList().get(i),stageChoice.getX2(),stageChoice.getY2());
                             }
                             else
+                            if(p2chose)
                                 p2 = new Player2(setup.getPlayerList().get(setup.getPlayerList().size()-1),stageChoice.getX2(),stageChoice.getY2());
 
                             //player2Selected = false;
@@ -206,26 +236,30 @@ public class GamePanel extends JPanel implements Runnable
                     p1chosen = true;
                 if(p2 != null)
                     p2chosen = true;
-                if(xy.intersects(startButton) && inCharSelect == true && p1 != null && p2 != null)
+                if((pl1.intersects(startButton) || pl2.intersects(startButton))  && inCharSelect == true && p1 != null && p2 != null)
                 {
                     inCharSelect = false;
                     onMenu = false;
                     inStageSelect = true;
+                    p1chose = false;
+                    p2chose = false;
                 }
             }
             else if(inStageSelect == true)
             {
                 int i = 0;
+                Rectangle pl1 = new Rectangle(x1,y1,64,64);
+                Rectangle pl2 = new Rectangle(x2,y2,64,64);
                 //inStageSelect = false; 
                 //boolean test1 = true;
-                Rectangle xy = new Rectangle(mouseX,mouseY,1,1);
+                //Rectangle xy = new Rectangle(mouseX,mouseY,1,1);
                 //make a new rectangle that moves with the arrow keys and check for intersections
 
                 for(int r=0;r<stageLocations.length;r++)
                 {
                     for(int c=0;c<stageLocations[0].length;c++)
                     {
-                        if(xy.intersects(stageLocations[r][c]))
+                        if(pl1.intersects(stageLocations[r][c]) || pl2.intersects(stageLocations[r][c]))
                         {
                             stageSelect = menu.getStages().get(i);
                             stageChoice = menu.getAllStages().get(i);
@@ -253,24 +287,30 @@ public class GamePanel extends JPanel implements Runnable
                         break;
                 }
 
-                if(xy.intersects(startButton) && stageTest == false)
+                if((pl1.intersects(startButton) || pl2.intersects(startButton)) && stageTest == false && (p1chose || p2chose))
                 {
                     inStageSelect = false;
                     loadingDone = false;
                     inGame = true;
                     stageTest = true;
+                    p1chose = false;
+                    p2chose = false;
                     camera = new Camera(stageSelect);
                 }
 
             }
             else if(gameOver)
             {
-                Rectangle xy = new Rectangle(mouseX,mouseY,1,1);
-                if(xy.intersects(startButton))
+                //Rectangle xy = new Rectangle(mouseX,mouseY,1,1);
+                Rectangle pl1 = new Rectangle(x1,y1,64,64);
+                Rectangle pl2 = new Rectangle(x2,y2,64,64);
+                if(pl1.intersects(startButton) || pl2.intersects(startButton) && (p1chose || p2chose))
                 {
                     gameOver = false;
                     winner = "";
                     inCharSelect = true;
+                    p1chose = false;
+                    p2chose = false;
                 }
             }
         }
@@ -297,12 +337,16 @@ public class GamePanel extends JPanel implements Runnable
             //g2d.drawImage(test,0,0,null);
 
             menu.drawMenuScreen(g2d);
+            g2d.drawImage(p1IconIm,x1,y1,null);
+            g2d.drawImage(p2IconIm,x2,y2,null);
             //fillRect(g2d,battleButton);
             //fillRect(g2d,rulesButton);
         }
         else if(inRules == true)
         {
             menu.drawRuleScreen(g2d);
+            g2d.drawImage(p1IconIm,x1,y1,null);
+            g2d.drawImage(p2IconIm,x2,y2,null);
         }
         else if(inCharSelect == true)
         {
@@ -316,11 +360,15 @@ public class GamePanel extends JPanel implements Runnable
             {
                 g2d.drawImage(p2.getPicture(),420,300,300,300,this);
             }       
+            g2d.drawImage(p1IconIm,x1,y1,null);
+            g2d.drawImage(p2IconIm,x2,y2,null);
             //g2d.fillRect(startButton.x,startButton.y,startButton.width,startButton.height);
         }
         else if(inStageSelect == true)
         {
             menu.drawStageSelect(g2d);
+            g2d.drawImage(p1IconIm,x1,y1,null);
+            g2d.drawImage(p2IconIm,x2,y2,null);
             //g2d.setColor(Color.GREEN);
             //g2d.fillRect(startButton.x,startButton.y,startButton.width,startButton.height);
             //g2d.fillRect(stageLocations[0][0].x,stageLocations[0][0].y,stageLocations[0][0].width,stageLocations[0][0].height);        
@@ -340,10 +388,13 @@ public class GamePanel extends JPanel implements Runnable
             g2d.setFont(small);
             g2d.drawImage(stageChoice.getStage(),0,0,null);
             //g2d.drawImage(camera.getBackground(),0,0,100,100,this);
-            if(p1.attack == true)
-                g2d.drawImage(p1.getPlayerImage(),(int)p1.getX(),(int)p1.getY(),120,120,this);
-            else
-                g2d.drawImage(p1.getPlayerImage(),(int)p1.getX(),(int)p1.getY(),100,100,this);
+            //if(p1.attack == true)
+            //g2d.drawImage(p1.getPlayerImage(),(int)p1.getX(),(int)p1.getY(),120,120,this);
+            //else
+            g2d.drawString("P1",(int)p1.getX(),(int)p1.getY()-5);
+            //g2d.drawString("P2",(int)p2.getX(),(int)p2.getY()-5);
+            g2d.drawImage(p1.getPlayerImage(),(int)p1.getX(),(int)p1.getY(),100,100,this);
+            g2d.drawString("P2",(int)p2.getX(),(int)p2.getY()-5);
             g2d.drawImage(p2.getPlayerImage(),(int)p2.getX(),(int)p2.getY(),100,100,this);
             g2d.setColor(Color.RED);
             g2d.drawString("Player 1: "+(int)p1.getHealth() + " PHEALTH is " + (int)p1.getPHEALTH() + "TimePassed is " + p1.getTimePassed() + "Shield is at " + p1.getShield(),100,35);
@@ -443,6 +494,23 @@ public class GamePanel extends JPanel implements Runnable
                 }
 
             }
+            if(right)
+                x1=x1+10;
+            else if(left)
+                x1 =x1-10;
+            if(up)
+                y1=y1-10;
+            else if(down)
+                y1=y1+10;
+            if(right2)
+                x2=x2+10;
+            else if(left2)
+                x2 =x2-10;
+            if(up2)
+                y2=y2-10;
+            else if(down2)
+                y2=y2+10;
+            testPress(0,0);
             //p2.update();
         }
     }
@@ -633,35 +701,106 @@ public class GamePanel extends JPanel implements Runnable
 
     private class TAdapter extends KeyAdapter {
 
-        public void keyReleased(KeyEvent e) {
-            if(inCharSelect == true)
-            {
-
-            }
-            else if(inStageSelect == true)
-            {
-
-            }
-            else if(inGame == true)
-            {
-                p1.keyReleased(e);
-                p2.keyReleased(e);
-            }
-        }
-
         public void keyPressed(KeyEvent e) {
-            if(inCharSelect == true)
-            {
+            int keyCode = e.getKeyCode();
+            if(inGame == false){
 
-            }
-            else if(inStageSelect == true)
-            {
-
+                if(keyCode == KeyEvent.VK_L)
+                {
+                    p1chose = true;
+                }
+                if(keyCode == KeyEvent.VK_RIGHT)
+                {
+                    right = true;//x1 = x1+5;
+                }
+                else if(keyCode == KeyEvent.VK_LEFT)
+                {
+                    left = true;//x1 = x1-5;
+                }
+                if(keyCode == KeyEvent.VK_UP)
+                {
+                    up=true;//y1 = y1-5;
+                }
+                else if(keyCode == KeyEvent.VK_DOWN)
+                {
+                    down=true;//y1 = y1+5;
+                }
+                if(keyCode == KeyEvent.VK_R)
+                {
+                    p2chose = true;
+                }
+                if(keyCode == KeyEvent.VK_D)
+                {
+                    right2=true;x2 = x2+5;
+                }
+                else if(keyCode == KeyEvent.VK_A)
+                {
+                    left2=true;//x2 = x2-5;
+                }
+                if(keyCode == KeyEvent.VK_W)
+                {
+                    up2=true;//y2 = y2-5;
+                }
+                else if(keyCode == KeyEvent.VK_S)
+                {
+                    down2=true;//y2 = y2+5;
+                }
             }
             else if(inGame == true)
             {
                 p1.keyPressed(e);
                 p2.keyPressed(e);
+            }
+        }
+
+        public void keyReleased(KeyEvent e) {
+            int keyCode = e.getKeyCode();
+            if(inGame == false){
+                if(keyCode == KeyEvent.VK_R)
+                {
+                    p2chose = false;
+                }
+                if(keyCode == KeyEvent.VK_L)
+                {
+                    p1chose = false;
+                }
+                if(keyCode == KeyEvent.VK_RIGHT)
+                {
+                    right = false;//x1 = x1+5;
+                }
+                else if(keyCode == KeyEvent.VK_LEFT)
+                {
+                    left = false;//x1 = x1-5;
+                }
+                if(keyCode == KeyEvent.VK_UP)
+                {
+                    up=false;//y1 = y1-5;
+                }
+                else if(keyCode == KeyEvent.VK_DOWN)
+                {
+                    down=false;//y1 = y1+5;
+                }
+                if(keyCode == KeyEvent.VK_D)
+                {
+                    right2=false;x2 = x2+5;
+                }
+                else if(keyCode == KeyEvent.VK_A)
+                {
+                    left2=false;//x2 = x2-5;
+                }
+                if(keyCode == KeyEvent.VK_W)
+                {
+                    up2=false;//y2 = y2-5;
+                }
+                else if(keyCode == KeyEvent.VK_S)
+                {
+                    down2=false;//y2 = y2+5;
+                }
+            }
+            else if(inGame == true)
+            {
+                p1.keyReleased(e);
+                p2.keyReleased(e);
             }
         }
     }
