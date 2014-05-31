@@ -30,7 +30,6 @@ public class Animation {
 
         if(delay == -1) 
         return;
-
         long elapsed = (System.nanoTime() - startTime) / 1000000;
         if(elapsed > delay) {
             currentFrame++;

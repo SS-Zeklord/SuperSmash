@@ -16,14 +16,23 @@ public class Stage
     private int startingY1;
     private int startingX2;
     private int startingY2;
-    public Stage(BufferedImage stage, LinkedList<Rectangle> bounds, int x, int y, int x2, int y2)
+    private Rectangle stageBounds;
+    private BufferedImage icon;
+    public Stage(BufferedImage ic, Rectangle stageBound, BufferedImage stage, LinkedList<Rectangle> bounds, int x, int y, int x2, int y2)
     {
+        stageBounds = stageBound;
         this.stage = stage;
         this.bounds = bounds;
+        icon = ic;
         startingX1 = x;
         startingX2 = x2;
         startingY1 = y;
         startingY2 = y2;
+    }
+
+    public Rectangle getStageBounds()
+    {
+        return stageBounds;
     }
 
     public int getY1()
@@ -44,6 +53,11 @@ public class Stage
     public int getX2()
     {
         return startingX2;
+    }
+
+    public BufferedImage getIconImage()
+    {
+        return icon;
     }
 
     public BufferedImage getStage()

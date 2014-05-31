@@ -22,6 +22,7 @@ public class Player
     private BufferedImage playerImage;
     private BufferedImage iconImage;
     private String name;
+    
     public Player(String Name, BufferedImage player, BufferedImage icon, double w, double s, double b, LinkedList<BufferedImage> r, LinkedList<BufferedImage> l, LinkedList<BufferedImage> u,LinkedList<BufferedImage> d, LinkedList<BufferedImage> sA, LinkedList<BufferedImage> bA)
     {
         name = Name;

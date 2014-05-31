@@ -17,8 +17,10 @@ public class Menu
     private final double stageIconH;
     private final int width = 4;
     private final int height = 2;
-    private final int startX = 500;
-    private final int startY = 400;
+    private final int startX = 875;
+    private final int startY = 220;
+    private final int gapY = 50;
+    private final int gapX = 50;
     private LinkedList<Player> images;
     private BufferedImage menuBackground;
     private LinkedList<BufferedImage> stages;
@@ -27,11 +29,16 @@ public class Menu
     private BufferedImage ruleScreen;
     private BufferedImage menuScreen;
     private LinkedList<Stage> allStages;
-    public Menu(LinkedList<Player> icon, BufferedImage menuBackground, LinkedList<BufferedImage> stages, BufferedImage stageSelection, BufferedImage ruleScreen, BufferedImage menuScreen, LinkedList<Stage> allStage)
+    private BufferedImage loadingScreen;
+    private BufferedImage gameOverScreen;
+    private int numOfActualStages;
+    public Menu(BufferedImage gO, BufferedImage lS, LinkedList<Player> icon, BufferedImage menuBackground, LinkedList<BufferedImage> stages, BufferedImage stageSelection, BufferedImage ruleScreen, BufferedImage menuScreen, LinkedList<Stage> allStage)
     {
         this.allStages = allStage;
-        iconWidth = icon.get(0).getIconImage().getWidth();
-        iconHeight = icon.get(0).getIconImage().getHeight();
+        loadingScreen = lS;
+        gameOverScreen = gO;
+        iconWidth = 120;//icon.get(0).getIconImage().getWidth();
+        iconHeight = 120;//icon.get(0).getIconImage().getHeight();
         stageIconW = iconWidth;//stages.get(0).getWidth();
         stageIconH = iconHeight;//stages.get(0).getHeight();
         stageBackground = stageSelection;
@@ -42,13 +49,21 @@ public class Menu
         this.stages = stages;
         this.ruleScreen = ruleScreen;
         this.menuScreen = menuScreen;
+        int sX = 0;
+        int sY = 0;
         for(int r=0;r<icons.length;r++)
         {
             for(int c=0;c<icons[0].length;c++)
             {
-                icons[r][c] = new Rectangle((int)(startX+(iconWidth*c)),(int)(iconHeight*r)+startY,(int)iconWidth,(int)iconHeight);
+
+                sY = gapY*r + (int)(iconHeight*r)+startY;
+                
+                sX = gapX*c +(int)(iconWidth*c)+startX;
+
+                icons[r][c] = new Rectangle(sX,sY,(int)iconWidth,(int)iconHeight);
             }
         }
+        //stageChoices[0][0] = new Rectangle(857,231,1,1);
         for(int r=0;r<stageChoices.length;r++)
         {
             for(int c=0;c<stageChoices[0].length;c++)
@@ -56,6 +71,18 @@ public class Menu
                 stageChoices[r][c] = new Rectangle((int)(startX+(stageIconW*c)),(int)(stageIconH),(int)stageIconW,(int)stageIconH);
             }
         }
+        stageChoices[0][0] = new Rectangle(857,231,600,350);
+        numOfActualStages=1;
+    }
+
+    public void drawGameOverScreen(Graphics g)
+    {
+        g.drawImage(gameOverScreen,0,0,null);
+    }
+
+    public void drawLoadingScreen(Graphics2D g2d)
+    {
+        g2d.drawImage(loadingScreen,0,0,null);
     }
 
     public LinkedList<Stage> getAllStages()
@@ -83,6 +110,11 @@ public class Menu
         return icons;
     }
 
+    public int getNumOfActualStages()
+    {
+        return numOfActualStages;
+    }
+
     public Rectangle[][] getStageLocations()
     {
         return stageChoices;
@@ -93,22 +125,26 @@ public class Menu
         int count = stages.size();
         int g = 0;
         g2d.drawImage(stageBackground,0,0,null);
-        for(int r=0;r<stageChoices.length;r++)
+        for(int i=0;i<numOfActualStages;i++)
         {
-            for(int c=0;c<stageChoices[0].length;c++)
-            {
-                if(stages.get(g) != null)
-                {
-                    //g2d.setColor(Color.GREEN);
-                    //g2d.fillRect(stageChoices[r][c].x,stageChoices[r][c].y,stageChoices[r][c].width,stageChoices[r][c].height);//
-                    g2d.drawImage(allStages.get(g).getStage(),stageChoices[r][c].x,stageChoices[r][c].y,null);
-                }
-                if(g+1<count)
-                {
-                    g++;
-                }
-            }
+            g2d.drawImage(allStages.get(i).getIconImage(),stageChoices[0][i].x,stageChoices[0][i].y,null);
         }
+        //         for(int r=0;r<stageChoices.length;r++)
+        //         {
+        //             for(int c=0;c<stageChoices[0].length;c++)
+        //             {
+        //                 if(allStages.get(g) != null)
+        //                 {
+        //                     //g2d.setColor(Color.GREEN);
+        //                     //g2d.fillRect(stageChoices[r][c].x,stageChoices[r][c].y,stageChoices[r][c].width,stageChoices[r][c].height);//
+        //                     g2d.drawImage(allStages.get(g).getIconImage(),stageChoices[r][c].x,stageChoices[r][c].y,null);
+        //                 }
+        //                 if(g+1<numOfActualStages)
+        //                 {
+        //                     g++;
+        //                 }
+        //             }
+        //         }
     }
 
     public void drawCharSelect(Graphics2D g2d)
@@ -121,7 +157,7 @@ public class Menu
             for(int c=0;c<icons[0].length;c++)
             {
                 if(images.get(g) != null)
-                    g2d.drawImage(images.get(g).getIconImage(),icons[r][c].x,icons[r][c].y,null);
+                    g2d.drawImage(images.get(g).getIconImage(),icons[r][c].x,icons[r][c].y,120,120,null);
                 if(g+1<count)
                     g++;
             }

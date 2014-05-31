@@ -53,13 +53,18 @@ public class GamePanel extends JPanel implements Runnable
     private Rectangle[][] iconLocations;
     private Rectangle[][] stageLocations;
     private Rectangle startButton = new Rectangle(0,0,500,145);
-    private Rectangle rulesButton = new Rectangle(93,495,256,73);
-    private Rectangle battleButton = new Rectangle(1494,493,262,73);
+    private Rectangle rulesButton = new Rectangle(38,573,486,120);
+    private Rectangle battleButton = new Rectangle(1368,575,530,120);
     private BufferedImage stageSelect;
     private int mouseX;
     private int mouseY;
     private Stage stageChoice;
+    private Font small = new Font("Helvetica", Font.BOLD, 40);
     private boolean debug = true;
+    private boolean loadingDone = true;
+    private String winner = "";
+    private boolean p1chosen = false;
+    private boolean p2chosen = false;
     public GamePanel()  
     {
         String heightprompt = "Do you want to turn debugging on?";
@@ -113,8 +118,8 @@ public class GamePanel extends JPanel implements Runnable
                 inStageSelect = false;
                 inGame = true;
                 stageChoice = menu.getAllStages().get(0);
-                p1 = new Player1(setup.getPlayerList().get(0),stageChoice.getX1(),stageChoice.getY2());
-                p2 = new Player2(setup.getPlayerList().get(0));//,stageChoice.getX2(),stageChoice.getY2());
+                p1 = new Player1(setup.getPlayerList().get(0),stageChoice.getX1(),stageChoice.getY1());
+                p2 = new Player2(setup.getPlayerList().get(0),stageChoice.getX2(),stageChoice.getY2());//,stageChoice.getX2(),stageChoice.getY2());
                 p1.setColl(stageChoice.getBounds());
                 p2.setColl(stageChoice.getBounds());
                 camera = new Camera(stageChoice.getStage());
@@ -157,6 +162,7 @@ public class GamePanel extends JPanel implements Runnable
                 Rectangle xy = new Rectangle(x,y,1,1);
                 //make a new rectangle that moves with the arrow keys and check for intersections/
                 int i = 0;
+                stageChoice = menu.getAllStages().get(0);
                 for(int r=0;r<iconLocations.length;r++)
                 {
                     for(int c=0;c<iconLocations[0].length;c++)
@@ -170,7 +176,7 @@ public class GamePanel extends JPanel implements Runnable
                                 p1 = new Player1(setup.getPlayerList().get(i),stageChoice.getX1(),stageChoice.getY2());
                             }
                             else
-                                p1 = new Player1(setup.getPlayerList().get(setup.getPlayerList().size()-1),stageChoice.getX1(),stageChoice.getY2());
+                                p1 = new Player1(setup.getPlayerList().get(setup.getPlayerList().size()-1),stageChoice.getX2(),stageChoice.getY2());
                             //player1Selected = false;
                             //}
 
@@ -178,10 +184,11 @@ public class GamePanel extends JPanel implements Runnable
                             //{
                             if(i<setup.getPlayerList().size())
                             {
-                                p2 = new Player2(setup.getPlayerList().get(i));
+                                p2 = new Player2(setup.getPlayerList().get(i),stageChoice.getX2(),stageChoice.getY2());
                             }
                             else
-                                p2 = new Player2(setup.getPlayerList().get(setup.getPlayerList().size()-1));
+                                p2 = new Player2(setup.getPlayerList().get(setup.getPlayerList().size()-1),stageChoice.getX2(),stageChoice.getY2());
+
                             //player2Selected = false;
                             //}
                         }
@@ -189,7 +196,10 @@ public class GamePanel extends JPanel implements Runnable
                     }
 
                 }
-
+                if(p1 != null)
+                    p1chosen = true;
+                if(p2 != null)
+                    p2chosen = true;
                 if(xy.intersects(startButton) && inCharSelect == true && p1 != null && p2 != null)
                 {
                     inCharSelect = false;
@@ -213,6 +223,10 @@ public class GamePanel extends JPanel implements Runnable
                         {
                             stageSelect = menu.getStages().get(i);
                             stageChoice = menu.getAllStages().get(i);
+                            p1.setX(stageChoice.getX1());
+                            p1.setY(stageChoice.getY1());
+                            p2.setX(stageChoice.getX2());
+                            p2.setY(stageChoice.getY2());
                             p1.setColl(stageChoice.getBounds());
                             p2.setColl(stageChoice.getBounds());
                             //                         if(i<=menu.getStages().size())
@@ -236,11 +250,22 @@ public class GamePanel extends JPanel implements Runnable
                 if(xy.intersects(startButton) && stageTest == false)
                 {
                     inStageSelect = false;
+                    loadingDone = false;
                     inGame = true;
                     stageTest = true;
                     camera = new Camera(stageSelect);
                 }
 
+            }
+            else if(gameOver)
+            {
+                Rectangle xy = new Rectangle(mouseX,mouseY,1,1);
+                if(xy.intersects(startButton))
+                {
+                    gameOver = false;
+                    winner = "";
+                    inCharSelect = true;
+                }
             }
         }
     }
@@ -264,7 +289,10 @@ public class GamePanel extends JPanel implements Runnable
         if(onMenu == true)
         {
             //g2d.drawImage(test,0,0,null);
+
             menu.drawMenuScreen(g2d);
+            //fillRect(g2d,battleButton);
+            //fillRect(g2d,rulesButton);
         }
         else if(inRules == true)
         {
@@ -274,18 +302,36 @@ public class GamePanel extends JPanel implements Runnable
         {
             menu.drawCharSelect(g2d);
             g2d.setColor(Color.GREEN);
+            if(p1chosen)
+            {
+                g2d.drawImage(p1.getPicture(),50,300,150,150,this);
+            } 
+            if(p2chosen)
+            {
+                g2d.drawImage(p2.getPicture(),100,300,150,150,this);
+            }       
             //g2d.fillRect(startButton.x,startButton.y,startButton.width,startButton.height);
         }
         else if(inStageSelect == true)
         {
             menu.drawStageSelect(g2d);
-            g2d.setColor(Color.GREEN);
+            //g2d.setColor(Color.GREEN);
             //g2d.fillRect(startButton.x,startButton.y,startButton.width,startButton.height);
-            g2d.fillRect(stageLocations[0][0].x,stageLocations[0][0].y,stageLocations[0][0].width,stageLocations[0][0].height);  
+            //g2d.fillRect(stageLocations[0][0].x,stageLocations[0][0].y,stageLocations[0][0].width,stageLocations[0][0].height);        
+        }
+        else if(loadingDone == false)
+        {
+            //g2d.setColor(Color.BLACK);
+            //g2d.fillRect(0,0,1920,1080);
+            menu.drawLoadingScreen(g2d);
+            new Thread(new loading()).start();
         }
         else if(inGame == true)
         {
             //g2d.drawImage(stageSelect,0,0,2000,2000,this);
+            //g2d.setColor(Color.BLACK);
+            //g2d.fillRect(0,0,1920,1080);
+            g2d.setFont(small);
             g2d.drawImage(stageChoice.getStage(),0,0,null);
             //g2d.drawImage(camera.getBackground(),0,0,100,100,this);
             if(p1.attack == true)
@@ -293,42 +339,103 @@ public class GamePanel extends JPanel implements Runnable
             else
                 g2d.drawImage(p1.getPlayerImage(),(int)p1.getX(),(int)p1.getY(),100,100,this);
             g2d.drawImage(p2.getPlayerImage(),(int)p2.getX(),(int)p2.getY(),100,100,this);
+            g2d.setColor(Color.RED);
+            g2d.drawString("Player 1: "+(int)p1.getHealth() + " PHEALTH is " + (int)p1.getPHEALTH() + "TimePassed is " + p1.getTimePassed() + "Shield is at " + p1.getShield(),100,35);
+            g2d.drawString("Player 2: "+(int)p2.getHealth() + " PHEALTH is " + (int)p2.getPHEALTH() + "TimePassed is " + p2.getTimePassed() + "Shield is at " + p2.getShield(),100,75);
         }
+        else if(gameOver)
+        {
+            gameOverMessage(g);
+            //g2d.setColor(Color.BLUE);
+            //fillRect(g2d,startButton);
+            //g2d.fillRect(startButton.x,startButton.y,startButton.width,startButton.height);;
+        }
+    }
+
+    private void gameOverMessage(Graphics g)
+    {//make ult, make shield sidestep, second attack 
+        //g.drawImage(gameOvers,0,0,null);
+        menu.drawGameOverScreen(g);
+        g.setFont(small);
+        //g.drawString("GAME OVER",50,50);   
+        if(winner.equals("p1"))
+        {
+            p1.getGOImage();
+            p2.getGOImage();
+            g.drawString("PLAYER 1",300,450);
+            g.drawString("PLAYER 2",1327,450);
+            g.drawImage(p1.getPlayerImage(),300,470,400,400,this);
+            g.drawImage(p2.getPlayerImage(),1327,470,400,400,this);
+        }
+        else if(winner.equals("p2"))
+        {
+            p1.getGOImage();
+            p2.getGOImage();
+            g.drawString("PLAYER 2",300,450);
+            g.drawString("PLAYER 1",1327,450);
+            g.drawImage(p2.getPlayerImage(),300,470,400,400,this);
+            g.drawImage(p1.getPlayerImage(),1327,470,400,400,this);
+        }
+    }  
+
+    public void fillRect(Graphics2D g2d, Rectangle img)
+    {
+        g2d.setColor(Color.RED);
+        g2d.fillRect(img.x,img.y,img.width,img.height);
     }
 
     private void gameUpdate()
     {
-        if(!gameOver)
+        if(gameOver == false)
         {
             if(inGame == true)
             {
-                p1.update();
-                p2.update();
-                int smallerX = 0;
-                int smallerY = 0;
-                int w = 0;
-                int h = 0;
-                if(p1.getX() <= p2.getX())
+                Rectangle originalP1 = p1.getBounds();
+                p1.update(p2.getDMG(), p2.getBounds(), p2.getCurrentPress());
+                p2.update(p1.getDMG(), originalP1, p1.getCurrentPress());
+                //p1.addToX(p2.getKnockBack());
+                //p2.addToX(p1.getKnockBack());
+                if(p1.getBounds().intersects(stageChoice.getStageBounds()) == false)
                 {
-                    smallerX = (int)p1.getX();
-                    w = (int)p2.getX()-smallerX;
+                    gameOver = true;
+                    winner = "p2";
+                    inGame = false;
                 }
-                else
+                else if(p2.getBounds().intersects(stageChoice.getStageBounds()) == false)
                 {
-                    smallerX = (int)p2.getX();
-                    w = (int)p1.getX()-smallerX;
+                    gameOver = true;
+                    winner = "p1";
+                    inGame = false;
                 }
-                if(p1.getY() <= p2.getY())
+                if(gameOver == false)
                 {
-                    smallerY = (int)p1.getY();
-                    h = (int)p2.getY()-smallerY;
+                    int smallerX = 0;
+                    int smallerY = 0;
+                    int w = 0;
+                    int h = 0;
+                    if(p1.getX() <= p2.getX())
+                    {
+                        smallerX = (int)p1.getX();
+                        w = (int)p2.getX()-smallerX;
+                    }
+                    else
+                    {
+                        smallerX = (int)p2.getX();
+                        w = (int)p1.getX()-smallerX;
+                    }
+                    if(p1.getY() <= p2.getY())
+                    {
+                        smallerY = (int)p1.getY();
+                        h = (int)p2.getY()-smallerY;
+                    }
+                    else
+                    {
+                        smallerY = (int)p2.getY();
+                        h = (int)p1.getY()-smallerY;
+                    }
+                    //camera.trace(smallerX,smallerY,w,h);
                 }
-                else
-                {
-                    smallerY = (int)p2.getY();
-                    h = (int)p1.getY()-smallerY;
-                }
-                camera.trace(smallerX,smallerY,w,h);
+
             }
             //p2.update();
         }
@@ -367,8 +474,10 @@ public class GamePanel extends JPanel implements Runnable
                 }
                 catch(Exception ex){}
                 startGame = false;
-
-                gameOver = false;
+                p1chosen = false;
+                p2chosen = false;
+                //running = false;
+                //gameOver = false;
             }
             else if(isPaused == false && gameOver == false){
                 gameUpdate();
@@ -404,6 +513,18 @@ public class GamePanel extends JPanel implements Runnable
             gameOverMessage(dbg);
     }
 
+    private class loading implements Runnable
+    {
+        public void run()
+        {
+            try{
+                Thread.sleep(150);
+                loadingDone = true;
+            }
+            catch(Exception ex){}
+        }
+    }
+
     private void delay(int dlay)
     {
         try{
@@ -412,13 +533,7 @@ public class GamePanel extends JPanel implements Runnable
         catch (Exception ex)
         {
         }
-    }
-
-    private void gameOverMessage(Graphics g)
-    {
-        g.drawImage(gameOvers,0,0,null);
-
-    }   
+    } 
 
     private void pauseGame()
     {

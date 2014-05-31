@@ -1,0 +1,14 @@
+#BlueJ class context
+comment0.params=
+comment0.target=CapitalizeClient()
+comment0.text=\r\n\ Constructs\ the\ client\ by\ laying\ out\ the\ GUI\ and\ registering\ a\r\n\ listener\ with\ the\ textfield\ so\ that\ pressing\ Enter\ in\ the\r\n\ listener\ sends\ the\ textfield\ contents\ to\ the\ server.\r\n
+comment1.params=e
+comment1.target=void\ actionPerformed(java.awt.event.ActionEvent)
+comment1.text=\r\n\ Responds\ to\ pressing\ the\ enter\ key\ in\ the\ textfield\r\n\ by\ sending\ the\ contents\ of\ the\ text\ field\ to\ the\r\n\ server\ and\ displaying\ the\ response\ from\ the\ server\r\n\ in\ the\ text\ area.\ \ If\ the\ response\ is\ "."\ we\ exit\r\n\ the\ whole\ application,\ which\ closes\ all\ sockets,\r\n\ streams\ and\ windows.\r\n
+comment2.params=
+comment2.target=void\ connectToServer()
+comment2.text=\r\n\ Implements\ the\ connection\ logic\ by\ prompting\ the\ end\ user\ for\r\n\ the\ server's\ IP\ address,\ connecting,\ setting\ up\ streams,\ and\r\n\ consuming\ the\ welcome\ messages\ from\ the\ server.\ \ The\ Capitalizer\r\n\ protocol\ says\ that\ the\ server\ sends\ three\ lines\ of\ text\ to\ the\r\n\ client\ immediately\ after\ establishing\ a\ connection.\r\n
+comment3.params=args
+comment3.target=void\ main(java.lang.String[])
+comment3.text=\r\n\ Runs\ the\ client\ application.\r\n
+numComments=4

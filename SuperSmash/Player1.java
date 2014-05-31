@@ -3,6 +3,7 @@ import java.io.*;
 import java.awt.image.*;
 import java.awt.event.*;
 import java.awt.*;
+import java.util.concurrent.*;
 /**
  * Write a description of class Player1 here.
  * 
@@ -22,6 +23,7 @@ public class Player1// implements Runnable
     private boolean left;
     private boolean right;
     public boolean attack;
+    public boolean attack2;
     private String lastPressed;
     private LinkedList<Rectangle> Coll;
     private String doNot = "";
@@ -38,6 +40,14 @@ public class Player1// implements Runnable
     private float distanceToJump = 0;
     private jump jump = new jump();
     private int jumps =0;
+    private float health;
+    private double kB;
+    private double pHealth;
+    private String currentPress = "";
+    private String cPP = "";
+    private TimeWatch timer = TimeWatch.start();
+    private double shield = 100;
+    private int shieldRegenAmount = 1;
     public Player1(Player p1, int x, int y)
     {
         this.p1 = p1;
@@ -45,10 +55,76 @@ public class Player1// implements Runnable
         xPos = x;
         yPos = y;
         lastPressed = "right";
+        cPP = lastPressed;
+        currentPress = lastPressed;
         dx = 1;
         dy = 1;
         Coll = new LinkedList<Rectangle>();
         anim = new Animation();
+        health = 3000;
+        pHealth = 0;
+    }
+
+    public long getTimePassed()
+    {
+        return timer.time(TimeUnit.SECONDS);
+    }
+
+    public String getCurrentPress()
+    {
+        return currentPress;
+    }
+
+    public double getPHEALTH()
+    {
+        return pHealth;
+    }
+
+    public void setX(double x)
+    {
+        xPos = (float)x;
+    }
+
+    public void setY(double y)
+    {
+        yPos = (float)y;
+    }
+
+    public void addToX(double x)
+    {
+        if(cPP.equals("right"))
+            xPos = xPos + (float)x;
+        else if(cPP.equals("left"))
+            xPos = xPos - (float)x;
+    }
+
+    public double getKnockBack()
+    {
+        return kB;
+    }
+
+    public Rectangle getBounds()
+    {
+        return new Rectangle((int)xPos,(int)yPos,playerImage.getWidth(),playerImage.getHeight());
+    }
+
+    public double getDMG()
+    {
+        if(attack)
+            return p1.getBD();
+        else if(attack2)
+            return p1.getSD();
+        return 0;
+    }
+
+    public float getHealth()
+    {
+        return health;
+    }
+
+    public void setHealth(double dmg)
+    {
+        health = health-(float)dmg;
     }
 
     public void setColl(LinkedList<Rectangle> coll)
@@ -85,6 +161,7 @@ public class Player1// implements Runnable
             if(bound.intersects(coll.get(i))) //|| coll.get(i).intersects(a))
             {
                 grav = 0.1;
+                speed = 0;
                 return true;
             }
         }
@@ -92,8 +169,74 @@ public class Player1// implements Runnable
         return false;
     }
 
-    public void update()
+    public double getShield()
     {
+        return shield;
+    }
+
+    public void regenShield()
+    {
+        if(!(attack && attack2))
+        {
+            for(int i =0;i<shieldRegenAmount;i++)
+            {
+                if(shield + 1 <= 100)
+                    shield = shield + .01;
+            }
+        }
+    }
+
+    public boolean shieldON()
+    {
+        if(down && shield > 0)
+        {
+            return true;
+        }
+        else
+            return false;
+    }
+
+    public void update(double dmg, Rectangle coll, String cP)
+    {
+        //         if(coll.intersects(getBounds()) == true)
+        //         {
+        //             setHealth(dmg);
+        //             pHealth = pHealth+dmg;   
+        //             if(dmg>0)
+        //                 kB = (((((pHealth/10+pHealth*dmg/20*25)))));//kB = (((((pHealth/10+pHealth*dmg/20)*200/p1.getWeight()+100*1.4)+18)*1)+1)*1;
+        //             else
+        //                 kB = 0;
+        //         }
+        //         else
+        //             kB = 0; 
+        if(coll.intersects(getBounds()) == true)
+        {
+            if(down){
+                if(shield > 0)
+                    for(int i=0;i<dmg;i++)
+                    {
+                        if(shield - 1 >= -10)
+                            shield = shield -1;
+                }
+                if(dmg>0)
+                    kB = 1;
+                else
+                    kB = 0;
+            }
+            else {
+                pHealth = pHealth+dmg;   
+                setHealth(dmg);
+                if(dmg>0)
+                    kB = (((((pHealth/10+pHealth*dmg/20*25)))));//kB = (((((pHealth/10+pHealth*dmg/20)*200/p1.getWeight()+100*1.4)+18)*1)+1)*1;
+                else
+                    kB = 0;
+            }
+
+        }
+        else
+            kB = 0;
+        cPP = cP;
+        addToX(kB);
         move();
         if(attack)
         {
@@ -146,27 +289,40 @@ public class Player1// implements Runnable
             //anim.setDelay(100);
         }
         //AttColl(a,dmg,att);
+        regenShield();
         jump();
         anim.update();
     }
 
     public void move()
     {
-        if(right)
+        if(attack)
+        {
+
+        }
+        else if(attack2)
+        {
+
+        }
+        else if(right)
         {
             for(int i=0;i<5;i++)
             {
-                if(getCollisions(Coll,1) == false)
+                if(getCollisions(Coll,1) == false && right)
                 {
-                    xPos = xPos+dx;
+                    xPos = xPos+1;//dx;
                 }
+                else
+                    break;
             }
         }
         else if(left)
         {
             for(int i=0;i<5;i++)
-                if(getCollisions(Coll,-1) == false)
-                    xPos = xPos-dx;
+                if(getCollisions(Coll,-1) == false && left)
+                    xPos = xPos-1;
+                else
+                    break;//dx;
         }
         //if(up)
         //{
@@ -189,8 +345,8 @@ public class Player1// implements Runnable
                 for(int i=0;i<speed;i++)
                 {
                     if(getCollisions(Coll,2) == false)
-                        yPos+=2;
-                    else{}
+                        yPos+=1;
+                    else{break;}
                     //jumpMax = 0;
                 }
             }
@@ -226,23 +382,37 @@ public class Player1// implements Runnable
     public void jump()
     {
         if(jumping || jump2)
-            yPos = yPos-10;
+            for(int i=0;i<10;i++)
+                if(getCollisions(Coll,-2) == false)
+                    yPos = yPos-1;
+                else
+                {
+                    gravityOn = true;
+                    break;
+        }
 
+    }
+
+    public void getGOImage()
+    {
+        anim.setFrames(p1.getWU());
     }
 
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
         if (key == KeyEvent.VK_L) {
             attack = true;
+            timer.reset();
         }
-        if(key == KeyEvent.VK_SPACE) {
-            
+        else if (key == KeyEvent.VK_K) {
+            attack2 = true;
+        }
+        if(key == KeyEvent.VK_UP) {
+
             if(!jumping && getGravColl(Coll,2) == true||jumps <=1)
             {
                 gravityOn = false;
-                
-                
-                
+
                 jumping = true;
                 new Thread(new jump()).start();
                 jumps++;
@@ -251,20 +421,22 @@ public class Player1// implements Runnable
 
         if (key == KeyEvent.VK_LEFT) {
             left = true;
-            //dx--;//-1;
+            currentPress = "left";
+            //dx++;//-1;
         }
 
         else if (key == KeyEvent.VK_RIGHT) {
             right = true;
+            currentPress = "right";
             //dx++;//1;
         }
 
-        if (key == KeyEvent.VK_UP) {
-            up = true;    
-            //gravityOn = false;
-            //dy--;//-1;
-        }
-        else if (key == KeyEvent.VK_DOWN) {
+        //if (key == KeyEvent.VK_W) {
+        //  up = true;    
+        //gravityOn = false;
+        //dy--;//-1;
+        //}
+        if (key == KeyEvent.VK_DOWN) {
             down = true;
             //dy++;//1;
         }
@@ -278,9 +450,9 @@ public class Player1// implements Runnable
                 Thread.sleep(400);
                 //gravityOn = true;
                 if(!jumping)
-                jump2=false;
+                    jump2=false;
                 jumping = false;
-                
+
                 gravityOn = true;
             }
             catch(Exception ex){}
@@ -292,28 +464,37 @@ public class Player1// implements Runnable
         if(key == KeyEvent.VK_L) {
             attack = false;
         }
+        else if (key == KeyEvent.VK_K) {
+            attack2 = false;
+        }
         if (key == KeyEvent.VK_LEFT) {
             left = false;
             lastPressed = "left";
-            //dx=0;
+            dx=0;
         }
 
         else if (key == KeyEvent.VK_RIGHT) {
             right = false;
             lastPressed = "right";
-            //dx=0;
+            dx=0;
         }
 
-        if (key == KeyEvent.VK_UP) {
-            lastPressed = "up";
-            up = false;
-            //dy=0;
-        }
-        else if (key == KeyEvent.VK_DOWN) {
+        //         if (key == KeyEvent.VK_W) {
+        //             lastPressed = "up";
+        //             up = false;
+        // dy=0;
+        //         }
+        //         else 
+        if (key == KeyEvent.VK_DOWN) {
             down = false;
             lastPressed = "down";
             //dy=0;
         }
+    }
+
+    public BufferedImage getPicture()
+    {
+        return playerImage;
     }
 
     public BufferedImage getPlayerImage()

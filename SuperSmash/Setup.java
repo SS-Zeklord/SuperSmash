@@ -35,6 +35,10 @@ public class Setup
     private BufferedImage ruleScreen;
     private LinkedList<Stage> allStages;
     private LinkedList<Rectangle> boundsForStage;
+    private Rectangle stagesBounds;
+    private BufferedImage loadingScreen;
+    private BufferedImage gameOverScreen;
+    private BufferedImage stageIcon;
     public Setup()
     {
         //makeMenu();
@@ -59,7 +63,9 @@ public class Setup
             BufferedImage lastStand = ImageIO.read(new File("Images/lastStand.png"));
             Rectangle lS = new Rectangle(393,567,1110,20);//(0,567,1110,20);//(393,567,1110,20);
             boundsForStage.add(lS);
-            Stage finalDestination = new Stage(lastStand,boundsForStage,375,5,600,5);
+            stagesBounds = new Rectangle(0,0,1920,1080);
+            stageIcon = ImageIO.read(new File("Images/lastStandIcon.png"));
+            Stage finalDestination = new Stage(stageIcon, stagesBounds, lastStand,boundsForStage,1000,5,500,5);
             allStages.add(finalDestination);
             stageBackground = ImageIO.read(new File("Images/charselect.png"));
             stages = new LinkedList<BufferedImage>();
@@ -101,8 +107,11 @@ public class Setup
         {
             menuBackground = ImageIO.read(new File("Images/charselect.png"));
             ruleScreen = ImageIO.read(new File("Images/ruleScreen.png"));
-            BufferedImage menuScreen = ImageIO.read(new File("Images/menuScreen.png"));
-            menu = new Menu(champions, menuBackground, stages, stageBackground, ruleScreen, menuScreen, allStages);
+            BufferedImage menuScreen = ImageIO.read(new File("Images/menu.png"));
+            loadingScreen = ImageIO.read(new File("Images/loadingScreen.png"));
+            gameOverScreen = ImageIO.read(new File("Images/gameover.png")); 
+            menu = new Menu(gameOverScreen, loadingScreen, champions, menuBackground, stages, stageBackground, ruleScreen, menuScreen, allStages);
+
         }
         catch(Exception ex){}
     }
@@ -112,8 +121,8 @@ public class Setup
         try
         {
             weight = 50;
-            specialAttackDMG = 7;
-            basicAttackDMG = 3;
+            specialAttackDMG = 10;
+            basicAttackDMG = 7;
             name = "Claudius";
             playerImage = ImageIO.read(new File("Images/claudiusAll.png"));
             ss = new SpriteSheet(playerImage);
