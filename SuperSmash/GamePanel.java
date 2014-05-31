@@ -128,6 +128,12 @@ public class GamePanel extends JPanel implements Runnable
         catch(Exception ex){}
     }
 
+    public void reset()//add all variables to reset and make a camera hat follos and make it go fullscreen in java
+    
+    {
+
+    }
+
     public void testPress(int x, int y)
     {
         if(isPaused == false)
@@ -304,11 +310,11 @@ public class GamePanel extends JPanel implements Runnable
             g2d.setColor(Color.GREEN);
             if(p1chosen)
             {
-                g2d.drawImage(p1.getPicture(),50,300,150,150,this);
+                g2d.drawImage(p1.getPicture(),40,300,300,300,this);
             } 
             if(p2chosen)
             {
-                g2d.drawImage(p2.getPicture(),100,300,150,150,this);
+                g2d.drawImage(p2.getPicture(),420,300,300,300,this);
             }       
             //g2d.fillRect(startButton.x,startButton.y,startButton.width,startButton.height);
         }
@@ -628,7 +634,15 @@ public class GamePanel extends JPanel implements Runnable
     private class TAdapter extends KeyAdapter {
 
         public void keyReleased(KeyEvent e) {
-            if(inGame == true)
+            if(inCharSelect == true)
+            {
+
+            }
+            else if(inStageSelect == true)
+            {
+
+            }
+            else if(inGame == true)
             {
                 p1.keyReleased(e);
                 p2.keyReleased(e);
@@ -636,7 +650,15 @@ public class GamePanel extends JPanel implements Runnable
         }
 
         public void keyPressed(KeyEvent e) {
-            if(inGame == true)
+            if(inCharSelect == true)
+            {
+
+            }
+            else if(inStageSelect == true)
+            {
+
+            }
+            else if(inGame == true)
             {
                 p1.keyPressed(e);
                 p2.keyPressed(e);
