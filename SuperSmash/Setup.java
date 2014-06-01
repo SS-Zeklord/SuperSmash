@@ -121,8 +121,8 @@ public class Setup
         try
         {
             weight = 50;
-            specialAttackDMG = 10;
-            basicAttackDMG = 7;
+            specialAttackDMG = 5;
+            basicAttackDMG = 3;
             name = "Claudius";
             playerImage = ImageIO.read(new File("Images/claudiusAll.png"));
             ss = new SpriteSheet(playerImage);

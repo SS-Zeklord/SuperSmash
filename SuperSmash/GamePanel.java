@@ -201,7 +201,7 @@ public class GamePanel extends JPanel implements Runnable
                 {
                     for(int c=0;c<iconLocations[0].length;c++)
                     {
-                        if(pl1.intersects(iconLocations[r][c]) || pl2.intersects(iconLocations[r][c]))
+                        if((pl1.intersects(iconLocations[r][c]) || pl2.intersects(iconLocations[r][c]) )&& (p1chose || p2chose))
                         {
                             //if(player1Selected == true)
                             //{
@@ -236,7 +236,7 @@ public class GamePanel extends JPanel implements Runnable
                     p1chosen = true;
                 if(p2 != null)
                     p2chosen = true;
-                if((pl1.intersects(startButton) || pl2.intersects(startButton))  && inCharSelect == true && p1 != null && p2 != null)
+                if((pl1.intersects(startButton) || pl2.intersects(startButton))  && inCharSelect == true && p1 != null && p2 != null && (p1chose || p2chose))
                 {
                     inCharSelect = false;
                     onMenu = false;
@@ -259,7 +259,7 @@ public class GamePanel extends JPanel implements Runnable
                 {
                     for(int c=0;c<stageLocations[0].length;c++)
                     {
-                        if(pl1.intersects(stageLocations[r][c]) || pl2.intersects(stageLocations[r][c]))
+                        if((pl1.intersects(stageLocations[r][c]) || pl2.intersects(stageLocations[r][c])) && (p1chose || p2chose))
                         {
                             stageSelect = menu.getStages().get(i);
                             stageChoice = menu.getAllStages().get(i);
@@ -391,10 +391,16 @@ public class GamePanel extends JPanel implements Runnable
             //if(p1.attack == true)
             //g2d.drawImage(p1.getPlayerImage(),(int)p1.getX(),(int)p1.getY(),120,120,this);
             //else
-            g2d.drawString("P1",(int)p1.getX(),(int)p1.getY()-5);
+            g2d.drawString("P1",(int)p1.getX()+30,(int)p1.getY()-5);
             //g2d.drawString("P2",(int)p2.getX(),(int)p2.getY()-5);
+            if(p1.shieldON() == true)
+                g2d.drawImage(p1.getShield1(),(int)p1.getX(),(int)p1.getY(),100,100,this);
+
             g2d.drawImage(p1.getPlayerImage(),(int)p1.getX(),(int)p1.getY(),100,100,this);
-            g2d.drawString("P2",(int)p2.getX(),(int)p2.getY()-5);
+            g2d.drawString("P2",(int)p2.getX()+30,(int)p2.getY()-5);
+            if(p2.shieldON() == true)
+                g2d.drawImage(p2.getShield2(),(int)p2.getX(),(int)(p2.getY()),100,100,this);
+
             g2d.drawImage(p2.getPlayerImage(),(int)p2.getX(),(int)p2.getY(),100,100,this);
             g2d.setColor(Color.RED);
             g2d.drawString("Player 1: "+(int)p1.getHealth() + " PHEALTH is " + (int)p1.getPHEALTH() + "TimePassed is " + p1.getTimePassed() + "Shield is at " + p1.getShield(),100,35);

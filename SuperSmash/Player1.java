@@ -4,6 +4,8 @@ import java.awt.image.*;
 import java.awt.event.*;
 import java.awt.*;
 import java.util.concurrent.*;
+import java.awt.image.*;
+import javax.imageio.*;
 /**
  * Write a description of class Player1 here.
  * 
@@ -48,6 +50,8 @@ public class Player1// implements Runnable
     private TimeWatch timer = TimeWatch.start();
     private double shield = 100;
     private int shieldRegenAmount = 1;
+    private int numToMove = 5;
+    private BufferedImage shield1;
     public Player1(Player p1, int x, int y)
     {
         this.p1 = p1;
@@ -63,6 +67,10 @@ public class Player1// implements Runnable
         anim = new Animation();
         health = 3000;
         pHealth = 0;
+        try{
+            shield1 = ImageIO.read(new File("Images/Shield1.png"));
+        }
+        catch(Exception ex){}
     }
 
     public long getTimePassed()
@@ -73,6 +81,11 @@ public class Player1// implements Runnable
     public String getCurrentPress()
     {
         return currentPress;
+    }
+
+    public BufferedImage getShield1()
+    {
+        return shield1;
     }
 
     public double getPHEALTH()
@@ -90,12 +103,50 @@ public class Player1// implements Runnable
         yPos = (float)y;
     }
 
+    public void test(double x)
+    {
+        float a = xPos;
+        while(a<a+x)
+        {
+            xPos = xPos +5;
+            //new Thread(new KnockOn()).start();
+        }
+
+    }
+
+    public class KnockOn implements Runnable
+    {
+        public void run()
+        {
+            try{
+                Thread.sleep(300);
+            }
+            catch(Exception ex){}
+        }
+    }
+
+    public void test2(double x)
+    {
+        float a = xPos;
+        while(a>a-x)
+        {
+            xPos = xPos -5;
+        }
+
+    }
+
     public void addToX(double x)
     {
         if(cPP.equals("right"))
+        {
             xPos = xPos + (float)x;
+            //test(x);
+        }
         else if(cPP.equals("left"))
+        {
             xPos = xPos - (float)x;
+            //test(x);
+        }
     }
 
     public double getKnockBack()
@@ -181,14 +232,14 @@ public class Player1// implements Runnable
             for(int i =0;i<shieldRegenAmount;i++)
             {
                 if(shield + 1 <= 100)
-                    shield = shield + .01;
+                    shield = shield + .1;
             }
         }
     }
 
     public boolean shieldON()
     {
-        if(down && shield > 0)
+        if(down && shield > 2 && (!(attack || attack2)))
         {
             return true;
         }
@@ -212,12 +263,15 @@ public class Player1// implements Runnable
         if(coll.intersects(getBounds()) == true)
         {
             if(down){
-                if(shield > 0)
+                if(shield > 2)
                     for(int i=0;i<dmg;i++)
                     {
                         if(shield - 1 >= -10)
                             shield = shield -1;
                 }
+                else 
+                if(shield<2)
+                    numToMove = 0;
                 if(dmg>0)
                     kB = 1;
                 else
@@ -235,6 +289,8 @@ public class Player1// implements Runnable
         }
         else
             kB = 0;
+        if(shield>2)
+            numToMove = 5;
         cPP = cP;
         addToX(kB);
         move();
@@ -306,7 +362,7 @@ public class Player1// implements Runnable
         }
         else if(right)
         {
-            for(int i=0;i<5;i++)
+            for(int i=0;i<numToMove;i++)
             {
                 if(getCollisions(Coll,1) == false && right)
                 {
@@ -318,7 +374,7 @@ public class Player1// implements Runnable
         }
         else if(left)
         {
-            for(int i=0;i<5;i++)
+            for(int i=0;i<numToMove;i++)
                 if(getCollisions(Coll,-1) == false && left)
                     xPos = xPos-1;
                 else
@@ -407,6 +463,10 @@ public class Player1// implements Runnable
         else if (key == KeyEvent.VK_K) {
             attack2 = true;
         }
+        else if (key == KeyEvent.VK_DOWN) {
+            down = true;
+            //dy++;//1;
+        }
         if(key == KeyEvent.VK_UP) {
 
             if(!jumping && getGravColl(Coll,2) == true||jumps <=1)
@@ -436,10 +496,7 @@ public class Player1// implements Runnable
         //gravityOn = false;
         //dy--;//-1;
         //}
-        if (key == KeyEvent.VK_DOWN) {
-            down = true;
-            //dy++;//1;
-        }
+
     }
 
     public class jump implements Runnable
@@ -467,6 +524,11 @@ public class Player1// implements Runnable
         else if (key == KeyEvent.VK_K) {
             attack2 = false;
         }
+        else if (key == KeyEvent.VK_DOWN) {
+            down = false;
+            lastPressed = "down";
+            //dy=0;
+        }
         if (key == KeyEvent.VK_LEFT) {
             left = false;
             lastPressed = "left";
@@ -485,11 +547,7 @@ public class Player1// implements Runnable
         // dy=0;
         //         }
         //         else 
-        if (key == KeyEvent.VK_DOWN) {
-            down = false;
-            lastPressed = "down";
-            //dy=0;
-        }
+
     }
 
     public BufferedImage getPicture()
