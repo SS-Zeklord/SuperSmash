@@ -52,6 +52,7 @@ public class Player1// implements Runnable
     private int shieldRegenAmount = 1;
     private int numToMove = 5;
     private BufferedImage shield1;
+    private boolean once = false;
     public Player1(Player p1, int x, int y)
     {
         this.p1 = p1;
@@ -352,33 +353,35 @@ public class Player1// implements Runnable
 
     public void move()
     {
-        if(attack)
-        {
-
-        }
-        else if(attack2)
-        {
-
-        }
-        else if(right)
-        {
-            for(int i=0;i<numToMove;i++)
+        if(once){
+            if(attack)
             {
-                if(getCollisions(Coll,1) == false && right)
-                {
-                    xPos = xPos+1;//dx;
-                }
-                else
-                    break;
+
             }
-        }
-        else if(left)
-        {
-            for(int i=0;i<numToMove;i++)
-                if(getCollisions(Coll,-1) == false && left)
-                    xPos = xPos-1;
-                else
-                    break;//dx;
+            else if(attack2)
+            {
+
+            }
+            else if(right)
+            {
+                for(int i=0;i<numToMove;i++)
+                {
+                    if(getCollisions(Coll,1) == false && right)
+                    {
+                        xPos = xPos+1;//dx;
+                    }
+                    else
+                        break;
+                }
+            }
+            else if(left)
+            {
+                for(int i=0;i<numToMove;i++)
+                    if(getCollisions(Coll,-1) == false && left)
+                        xPos = xPos-1;
+                    else
+                        break;//dx;
+            }
         }
         //if(up)
         //{
@@ -402,12 +405,15 @@ public class Player1// implements Runnable
                 {
                     if(getCollisions(Coll,2) == false)
                         yPos+=1;
-                    else{break;}
+                    else{once = true;
+                        break;}
                     //jumpMax = 0;
                 }
             }
-            else
+            else{
+                once = true;
                 jumps = 0;
+            }
         }
         else
         {

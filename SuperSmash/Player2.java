@@ -52,6 +52,7 @@ public class Player2// implements Runnable
     private int numToMove = 5;
     private boolean b = false;
     private BufferedImage shield2;
+    private boolean once = false;
     public Player2(Player p1, int x, int y)
     {
         this.p1 = p1;
@@ -344,33 +345,35 @@ public class Player2// implements Runnable
 
     public void move()
     {
-        if(attack)
-        {
-
-        }
-        else if(attack2)
-        {
-
-        }
-        else if(right)
-        {
-            for(int i=0;i<numToMove;i++)
+        if(once){
+            if(attack)
             {
-                if(getCollisions(Coll,1) == false && right)
-                {
-                    xPos = xPos+1;//dx;
-                }
-                else
-                    break;
+
             }
-        }
-        else if(left)
-        {
-            for(int i=0;i<numToMove;i++)
-                if(getCollisions(Coll,-1) == false && left)
-                    xPos = xPos-1;
-                else
-                    break;//dx;
+            else if(attack2)
+            {
+
+            }
+            else if(right)
+            {
+                for(int i=0;i<numToMove;i++)
+                {
+                    if(getCollisions(Coll,1) == false && right)
+                    {
+                        xPos = xPos+1;//dx;
+                    }
+                    else
+                        break;
+                }
+            }
+            else if(left)
+            {
+                for(int i=0;i<numToMove;i++)
+                    if(getCollisions(Coll,-1) == false && left)
+                        xPos = xPos-1;
+                    else
+                        break;//dx;
+            }
         }
         //if(up)
         //{
@@ -394,12 +397,13 @@ public class Player2// implements Runnable
                 {
                     if(getCollisions(Coll,2) == false)
                         yPos+=1;
-                    else{break;}
+                    else{once = true;
+                        break;}
                     //jumpMax = 0;
                 }
             }
-            else
-                jumps = 0;
+            else{
+                jumps = 0;once = true;}
         }
         else
         {
@@ -425,6 +429,7 @@ public class Player2// implements Runnable
             //                 else
             //gravityOn = true;
         }//catch (Exception ex){}
+
     }
 
     public void jump()

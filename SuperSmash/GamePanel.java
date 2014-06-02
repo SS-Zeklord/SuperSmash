@@ -676,7 +676,7 @@ public class GamePanel extends JPanel implements Runnable
             }
 
         }
-        if(inGame == false){
+        else if(inGame == false){
             if(right)
                 x1=x1+10;
             else if(left)
@@ -698,6 +698,7 @@ public class GamePanel extends JPanel implements Runnable
         //p2.update();
 
     }
+
     public void addNotify()
     {
         super.addNotify();
@@ -733,10 +734,11 @@ public class GamePanel extends JPanel implements Runnable
                 startGame = false;
                 p1chosen = false;
                 p2chosen = false;
+                gameUpdate();
                 //running = false;
                 //gameOver = false;
             }
-            else if(isPaused == false && gameOver == false){
+            else if(isPaused == false){
                 gameUpdate();
             }
             gameRender();
