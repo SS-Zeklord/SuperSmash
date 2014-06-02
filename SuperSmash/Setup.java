@@ -39,6 +39,7 @@ public class Setup
     private BufferedImage loadingScreen;
     private BufferedImage gameOverScreen;
     private BufferedImage stageIcon;
+    private AI ai1;
     public Setup()
     {
         //makeMenu();
@@ -46,12 +47,18 @@ public class Setup
         makeStages();
         champions = new LinkedList<Player>();
         Player Claudius = new Player(name, playerImage, icon, weight, specialAttackDMG, basicAttackDMG, wR, wL, wU, wD, bA, sA);
+        ai1 = new AI(Claudius,400,50);
         champions.add(Claudius);
         makeMenu();
         //make every player in the game.
         //make LinkedList of icons.
         //player1 = new Player1(Claudius);
         //player2 = new Player2(Claudius);
+    }
+
+    public AI getAI1()
+    {
+        return ai1;
     }
 
     public void makeStages()

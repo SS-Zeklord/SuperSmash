@@ -281,7 +281,7 @@ public class Player1// implements Runnable
                 pHealth = pHealth+dmg;   
                 setHealth(dmg);
                 if(dmg>0)
-                    kB = (((((pHealth/10+pHealth*dmg/20*25)))));//kB = (((((pHealth/10+pHealth*dmg/20)*200/p1.getWeight()+100*1.4)+18)*1)+1)*1;
+                    kB = (((((pHealth/10+pHealth*dmg/20*25))*2)));//kB = (((((pHealth/10+pHealth*dmg/20)*200/p1.getWeight()+100*1.4)+18)*1)+1)*1;
                 else
                     kB = 0;
             }

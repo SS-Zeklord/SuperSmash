@@ -4,6 +4,7 @@ import java.awt.image.*;
 import java.awt.event.*;
 import java.awt.*;
 import java.util.concurrent.*;
+import java.awt.image.*;
 import javax.imageio.*;
 /**
  * Write a description of class Player1 here.
@@ -11,7 +12,7 @@ import javax.imageio.*;
  * @author (your name) 
  * @version (a version number or a date)
  */
-public class Player2// implements Runnable
+public class AI// implements Runnable
 {
     private float xPos;
     private float yPos;
@@ -50,12 +51,17 @@ public class Player2// implements Runnable
     private double shield = 100;
     private int shieldRegenAmount = 1;
     private int numToMove = 5;
-    private boolean b = false;
-    private BufferedImage shield2;
-    public Player2(Player p1, int x, int y)
+    private BufferedImage shield1;
+    private boolean once = false;
+    private int PWidth;
+    private int PHeight;
+    private Rectangle stageB;
+    public AI(Player p1, int x, int y)
     {
         this.p1 = p1;
         playerImage = p1.getPlayerImage();
+        PWidth = playerImage.getWidth();
+        PHeight = playerImage.getHeight();
         xPos = x;
         yPos = y;
         lastPressed = "right";
@@ -68,9 +74,54 @@ public class Player2// implements Runnable
         health = 3000;
         pHealth = 0;
         try{
-            shield2 = ImageIO.read(new File("Images/Shield2.png"));
+            shield1 = ImageIO.read(new File("Images/Shield1.png"));
         }
         catch(Exception ex){}
+    }
+
+    public void setStageB(Rectangle b)
+    {
+        stageB = b;
+    }
+
+    public void aiUpdate(Rectangle player)
+    {
+        int x = player.x;
+        int y = player.y;
+        if(getBounds().intersects(player))
+        {
+            attack = true;
+            timer.reset();
+            //keyPressed(KeyEvent.VK_L);
+        }
+        else
+        {
+            attack = false;//keyReleased(KeyEvent.VK_L);
+            if(once == true){
+                if(xPos<x){
+                    left = false;
+                    right = true;
+                }
+                else if(xPos>x)
+                {
+
+                    right = false;
+                    left = true;
+                }
+            }
+        }
+
+    }
+
+    public boolean getOutOfBounds(int x)
+    {
+        Rectangle b = new Rectangle((int)xPos+x,(int)yPos+2,PWidth,PHeight);
+        for(int i=0;i<Coll.size();i++)
+        {
+            if(b.intersects(Coll.get(i)) == true)
+
+                return false;}
+        return true;
     }
 
     public long getTimePassed()
@@ -83,9 +134,9 @@ public class Player2// implements Runnable
         return currentPress;
     }
 
-    public BufferedImage getShield2()
+    public BufferedImage getShield1()
     {
-        return shield2;
+        return shield1;
     }
 
     public double getPHEALTH()
@@ -103,12 +154,29 @@ public class Player2// implements Runnable
         yPos = (float)y;
     }
 
+    public class KnockOn implements Runnable
+    {
+        public void run()
+        {
+            try{
+                Thread.sleep(300);
+            }
+            catch(Exception ex){}
+        }
+    }
+
     public void addToX(double x)
     {
         if(cPP.equals("right"))
+        {
             xPos = xPos + (float)x;
+            //test(x);
+        }
         else if(cPP.equals("left"))
+        {
             xPos = xPos - (float)x;
+            //test(x);
+        }
     }
 
     public double getKnockBack()
@@ -194,14 +262,9 @@ public class Player2// implements Runnable
             for(int i =0;i<shieldRegenAmount;i++)
             {
                 if(shield + 1 <= 100)
-                    shield = shield + .01;
+                    shield = shield + .1;
             }
         }
-    }
-
-    public BufferedImage getPicture()
-    {
-        return playerImage;
     }
 
     public boolean shieldON()
@@ -212,31 +275,6 @@ public class Player2// implements Runnable
         }
         else
             return false;
-    }
-
-    public void knock()
-    {
-        if(b == true)
-            if(cPP.equals("right"))
-            {
-                xPos=xPos+5;
-            }
-            else if(cPP.equals("left"))
-            {
-                xPos = xPos-5;
-        }
-    }
-
-    private class knockOn implements Runnable
-    {
-        public void run()
-        {
-            try{
-                Thread.sleep((int)kB*2);
-                b = false;
-            }
-            catch(Exception ex){}
-        }
     }
 
     public void update(double dmg, Rectangle coll, String cP)
@@ -261,7 +299,8 @@ public class Player2// implements Runnable
                         if(shield - 1 >= -10)
                             shield = shield -1;
                 }
-                else if(shield<2)
+                else 
+                if(shield<2)
                     numToMove = 0;
                 if(dmg>0)
                     kB = 1;
@@ -338,8 +377,8 @@ public class Player2// implements Runnable
         //AttColl(a,dmg,att);
         regenShield();
         jump();
-        //knock();
         anim.update();
+        aiUpdate(coll);
     }
 
     public void move()
@@ -358,7 +397,8 @@ public class Player2// implements Runnable
             {
                 if(getCollisions(Coll,1) == false && right)
                 {
-                    xPos = xPos+1;//dx;
+                    if(getOutOfBounds(1)==false)
+                        xPos = xPos+1;//dx;
                 }
                 else
                     break;
@@ -368,7 +408,10 @@ public class Player2// implements Runnable
         {
             for(int i=0;i<numToMove;i++)
                 if(getCollisions(Coll,-1) == false && left)
-                    xPos = xPos-1;
+                {
+                    if(getOutOfBounds(-1)==false)
+                        xPos = xPos-1;
+                }
                 else
                     break;//dx;
         }
@@ -394,12 +437,15 @@ public class Player2// implements Runnable
                 {
                     if(getCollisions(Coll,2) == false)
                         yPos+=1;
-                    else{break;}
+                    else{once = true;
+                        break;}
                     //jumpMax = 0;
                 }
             }
-            else
+            else{
                 jumps = 0;
+                once = true;
+            }
         }
         else
         {
@@ -446,20 +492,20 @@ public class Player2// implements Runnable
         anim.setFrames(p1.getWU());
     }
 
-    public void keyPressed(KeyEvent e) {
-        int key = e.getKeyCode();
-        if (key == KeyEvent.VK_R) {
+    public void keyPressed(int key) {
+
+        if (key == KeyEvent.VK_L) {
             attack = true;
             timer.reset();
         }
-        else if (key == KeyEvent.VK_G) {
+        else if (key == KeyEvent.VK_K) {
             attack2 = true;
         }
-        else if (key == KeyEvent.VK_S) {
+        else if (key == KeyEvent.VK_DOWN) {
             down = true;
             //dy++;//1;
         }
-        if(key == KeyEvent.VK_W) {
+        if(key == KeyEvent.VK_UP) {
 
             if(!jumping && getGravColl(Coll,2) == true||jumps <=1)
             {
@@ -471,13 +517,13 @@ public class Player2// implements Runnable
             }
         }
 
-        if (key == KeyEvent.VK_A) {
+        if (key == KeyEvent.VK_LEFT) {
             left = true;
             currentPress = "left";
             //dx++;//-1;
         }
 
-        else if (key == KeyEvent.VK_D) {
+        else if (key == KeyEvent.VK_RIGHT) {
             right = true;
             currentPress = "right";
             //dx++;//1;
@@ -508,26 +554,26 @@ public class Player2// implements Runnable
         }
     }
 
-    public void keyReleased(KeyEvent e) {
-        int key = e.getKeyCode();
-        if(key == KeyEvent.VK_R) {
+    public void keyReleased(int key) {
+
+        if(key == KeyEvent.VK_L) {
             attack = false;
         }
-        else if (key == KeyEvent.VK_G) {
+        else if (key == KeyEvent.VK_K) {
             attack2 = false;
         }
-        else if (key == KeyEvent.VK_S) {
+        else if (key == KeyEvent.VK_DOWN) {
             down = false;
             lastPressed = "down";
             //dy=0;
         }
-        if (key == KeyEvent.VK_A) {
+        if (key == KeyEvent.VK_LEFT) {
             left = false;
             lastPressed = "left";
             dx=0;
         }
 
-        else if (key == KeyEvent.VK_D) {
+        else if (key == KeyEvent.VK_RIGHT) {
             right = false;
             lastPressed = "right";
             dx=0;
@@ -540,6 +586,11 @@ public class Player2// implements Runnable
         //         }
         //         else 
 
+    }
+
+    public BufferedImage getPicture()
+    {
+        return playerImage;
     }
 
     public BufferedImage getPlayerImage()
